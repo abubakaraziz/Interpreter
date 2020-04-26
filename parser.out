@@ -1,0 +1,126 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    DIV
+    MINUS
+    MULT
+
+Grammar
+
+Rule 0     S' -> assign
+Rule 1     assign -> NAME EQUALS expr
+Rule 2     expr -> expr PLUS factor
+Rule 3     expr -> factor PLUS factor
+Rule 4     factor -> NUMBER
+
+Terminals, with rules where they appear
+
+DIV                  : 
+EQUALS               : 1
+MINUS                : 
+MULT                 : 
+NAME                 : 1
+NUMBER               : 4
+PLUS                 : 2 3
+error                : 
+
+Nonterminals, with rules where they appear
+
+assign               : 0
+expr                 : 1 2
+factor               : 2 3 3
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . assign
+    (1) assign -> . NAME EQUALS expr
+
+    NAME            shift and go to state 2
+
+    assign                         shift and go to state 1
+
+state 1
+
+    (0) S' -> assign .
+
+
+
+state 2
+
+    (1) assign -> NAME . EQUALS expr
+
+    EQUALS          shift and go to state 3
+
+
+state 3
+
+    (1) assign -> NAME EQUALS . expr
+    (2) expr -> . expr PLUS factor
+    (3) expr -> . factor PLUS factor
+    (4) factor -> . NUMBER
+
+    NUMBER          shift and go to state 6
+
+    expr                           shift and go to state 4
+    factor                         shift and go to state 5
+
+state 4
+
+    (1) assign -> NAME EQUALS expr .
+    (2) expr -> expr . PLUS factor
+
+    $end            reduce using rule 1 (assign -> NAME EQUALS expr .)
+    PLUS            shift and go to state 7
+
+
+state 5
+
+    (3) expr -> factor . PLUS factor
+
+    PLUS            shift and go to state 8
+
+
+state 6
+
+    (4) factor -> NUMBER .
+
+    PLUS            reduce using rule 4 (factor -> NUMBER .)
+    $end            reduce using rule 4 (factor -> NUMBER .)
+
+
+state 7
+
+    (2) expr -> expr PLUS . factor
+    (4) factor -> . NUMBER
+
+    NUMBER          shift and go to state 6
+
+    factor                         shift and go to state 9
+
+state 8
+
+    (3) expr -> factor PLUS . factor
+    (4) factor -> . NUMBER
+
+    NUMBER          shift and go to state 6
+
+    factor                         shift and go to state 10
+
+state 9
+
+    (2) expr -> expr PLUS factor .
+
+    PLUS            reduce using rule 2 (expr -> expr PLUS factor .)
+    $end            reduce using rule 2 (expr -> expr PLUS factor .)
+
+
+state 10
+
+    (3) expr -> factor PLUS factor .
+
+    PLUS            reduce using rule 3 (expr -> factor PLUS factor .)
+    $end            reduce using rule 3 (expr -> factor PLUS factor .)
+
