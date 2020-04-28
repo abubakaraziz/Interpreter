@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'DIV EQUALS MINUS MULT NAME NUMBER PLUSassign : NAME EQUALS exprexpr : expr PLUS factor\n                | factor PLUS factorfactor : NUMBER'
+_lr_signature = 'leftPLUSMINUSleftMULTDIVAND AND_LOGICAL BOOL COLON COMMA DIV EQUAL EQUALS GREATER GREATEREQUAL ID INT LESS LESSEQUAL LPAREN MINUS MULT NOT NOTEQUAL NUMBER OR OR_LOGICAL PERCENT PLUS PRINT RPAREN SQUARE STRING\n        statements : statements statement\n        \n        statements : statement \n        \n        statement : ID EQUALS expr \n        \n        statement : ID LPAREN expr RPAREN \n        expr : expr PLUS expr\n                | expr MINUS expr\n                | expr MULT expr\n                | expr DIV expr \n                expr : NUMBERexpr : IDexpr : STRING'
     
-_lr_action_items = {'NAME':([0,],[2,]),'$end':([1,4,6,9,10,],[0,-1,-4,-2,-3,]),'EQUALS':([2,],[3,]),'NUMBER':([3,7,8,],[6,6,6,]),'PLUS':([4,5,6,9,10,],[7,8,-4,-2,-3,]),}
+_lr_action_items = {'ID':([0,1,2,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,],[3,3,-2,-1,7,7,-10,-3,-9,-11,7,7,7,7,-4,-5,-6,-7,-8,]),'$end':([1,2,4,7,8,9,10,16,17,18,19,20,],[0,-2,-1,-10,-3,-9,-11,-4,-5,-6,-7,-8,]),'EQUALS':([3,],[5,]),'LPAREN':([3,],[6,]),'NUMBER':([5,6,12,13,14,15,],[9,9,9,9,9,9,]),'STRING':([5,6,12,13,14,15,],[10,10,10,10,10,10,]),'PLUS':([7,8,9,10,11,17,18,19,20,],[-10,12,-9,-11,12,-5,-6,-7,-8,]),'MINUS':([7,8,9,10,11,17,18,19,20,],[-10,13,-9,-11,13,-5,-6,-7,-8,]),'MULT':([7,8,9,10,11,17,18,19,20,],[-10,14,-9,-11,14,14,14,-7,-8,]),'DIV':([7,8,9,10,11,17,18,19,20,],[-10,15,-9,-11,15,15,15,-7,-8,]),'RPAREN':([7,9,10,11,17,18,19,20,],[-10,-9,-11,16,-5,-6,-7,-8,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'assign':([0,],[1,]),'expr':([3,],[4,]),'factor':([3,7,8,],[5,9,10,]),}
+_lr_goto_items = {'statements':([0,],[1,]),'statement':([0,1,],[2,4,]),'expr':([5,6,12,13,14,15,],[8,11,17,18,19,20,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,9 +26,16 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> assign","S'",1,None,None,None),
-  ('assign -> NAME EQUALS expr','assign',3,'p_assign','parser.py',7),
-  ('expr -> expr PLUS factor','expr',3,'p_expr_plus','parser.py',11),
-  ('expr -> factor PLUS factor','expr',3,'p_expr_plus','parser.py',12),
-  ('factor -> NUMBER','factor',1,'p_factor','parser.py',16),
+  ("S' -> statements","S'",1,None,None,None),
+  ('statements -> statements statement','statements',2,'p_statements_many','parser.py',20),
+  ('statements -> statement','statements',1,'p_statements_single','parser.py',26),
+  ('statement -> ID EQUALS expr','statement',3,'p_assignment_statement','parser.py',33),
+  ('statement -> ID LPAREN expr RPAREN','statement',4,'p_print_statement','parser.py',38),
+  ('expr -> expr PLUS expr','expr',3,'p_expr_binop','parser.py',51),
+  ('expr -> expr MINUS expr','expr',3,'p_expr_binop','parser.py',52),
+  ('expr -> expr MULT expr','expr',3,'p_expr_binop','parser.py',53),
+  ('expr -> expr DIV expr','expr',3,'p_expr_binop','parser.py',54),
+  ('expr -> NUMBER','expr',1,'p_expr_factor','parser.py',59),
+  ('expr -> ID','expr',1,'p_expr_id','parser.py',64),
+  ('expr -> STRING','expr',1,'p_expr_string','parser.py',68),
 ]
