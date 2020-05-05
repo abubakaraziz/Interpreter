@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftMULTDIVAND AND_LOGICAL BOOL COLON COMMA DIV EQUAL EQUALS GREATER GREATEREQUAL ID INT LESS LESSEQUAL LPAREN MINUS MULT NOT NOTEQUAL NUMBER OR OR_LOGICAL PERCENT PLUS PRINT RPAREN SQUARE STRING\n        statements : statements statement\n        \n        statements : statement \n        \n        statement : ID EQUALS expr \n        \n        statement : ID LPAREN expr RPAREN \n        expr : expr PLUS expr\n                | expr MINUS expr\n                | expr MULT expr\n                | expr DIV expr \n                expr : NUMBERexpr : IDexpr : STRING'
+_lr_signature = 'leftPLUSMINUSleftMULTDIVAND AND_LOGICAL BOOL COLON COMMA DIV DOUBLE EQUAL EQUALS GREATER GREATEREQUAL ID INT LESS LESSEQUAL LPAREN MINUS MULT NOT NOTEQUAL NUMBER OR OR_LOGICAL PERCENT PLUS PRINT RPAREN SQUARE STRING\n        statements : statements statement\n        \n        statements : statement \n        \n        statement : INT ID EQUALS expr\n                  | STRING ID EQUALS expr\n        \n        \n        statement : ID EQUALS expr \n        \n        statement : PRINT LPAREN print_expr RPAREN \n        \n        print_expr : expr\n                   | expr COMMA print_expr\n        expr : expr PLUS expr\n                | expr MINUS expr\n                | expr MULT expr\n                | expr DIV expr \n                expr : INT\n                | DOUBLEexpr : IDexpr : STRINGexpr : BOOL'
     
-_lr_action_items = {'ID':([0,1,2,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,],[3,3,-2,-1,7,7,-10,-3,-9,-11,7,7,7,7,-4,-5,-6,-7,-8,]),'$end':([1,2,4,7,8,9,10,16,17,18,19,20,],[0,-2,-1,-10,-3,-9,-11,-4,-5,-6,-7,-8,]),'EQUALS':([3,],[5,]),'LPAREN':([3,],[6,]),'NUMBER':([5,6,12,13,14,15,],[9,9,9,9,9,9,]),'STRING':([5,6,12,13,14,15,],[10,10,10,10,10,10,]),'PLUS':([7,8,9,10,11,17,18,19,20,],[-10,12,-9,-11,12,-5,-6,-7,-8,]),'MINUS':([7,8,9,10,11,17,18,19,20,],[-10,13,-9,-11,13,-5,-6,-7,-8,]),'MULT':([7,8,9,10,11,17,18,19,20,],[-10,14,-9,-11,14,14,14,-7,-8,]),'DIV':([7,8,9,10,11,17,18,19,20,],[-10,15,-9,-11,15,15,15,-7,-8,]),'RPAREN':([7,9,10,11,17,18,19,20,],[-10,-9,-11,16,-5,-6,-7,-8,]),}
+_lr_action_items = {'INT':([0,1,2,7,9,11,12,13,14,15,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,],[3,3,-2,-1,15,15,15,-15,-5,-13,-14,-16,-17,15,-3,15,15,15,15,-4,-6,15,-9,-10,-11,-12,]),'STRING':([0,1,2,7,9,11,12,13,14,15,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,],[5,5,-2,-1,17,17,17,-15,-5,-13,-14,-16,-17,17,-3,17,17,17,17,-4,-6,17,-9,-10,-11,-12,]),'ID':([0,1,2,3,5,7,9,11,12,13,14,15,16,17,18,19,22,23,24,25,26,27,28,29,30,31,32,33,],[4,4,-2,8,10,-1,13,13,13,-15,-5,-13,-14,-16,-17,13,-3,13,13,13,13,-4,-6,13,-9,-10,-11,-12,]),'PRINT':([0,1,2,7,13,14,15,16,17,18,22,27,28,30,31,32,33,],[6,6,-2,-1,-15,-5,-13,-14,-16,-17,-3,-4,-6,-9,-10,-11,-12,]),'$end':([1,2,7,13,14,15,16,17,18,22,27,28,30,31,32,33,],[0,-2,-1,-15,-5,-13,-14,-16,-17,-3,-4,-6,-9,-10,-11,-12,]),'EQUALS':([4,8,10,],[9,12,19,]),'LPAREN':([6,],[11,]),'DOUBLE':([9,11,12,19,23,24,25,26,29,],[16,16,16,16,16,16,16,16,16,]),'BOOL':([9,11,12,19,23,24,25,26,29,],[18,18,18,18,18,18,18,18,18,]),'PLUS':([13,14,15,16,17,18,21,22,27,30,31,32,33,],[-15,23,-13,-14,-16,-17,23,23,23,-9,-10,-11,-12,]),'MINUS':([13,14,15,16,17,18,21,22,27,30,31,32,33,],[-15,24,-13,-14,-16,-17,24,24,24,-9,-10,-11,-12,]),'MULT':([13,14,15,16,17,18,21,22,27,30,31,32,33,],[-15,25,-13,-14,-16,-17,25,25,25,25,25,-11,-12,]),'DIV':([13,14,15,16,17,18,21,22,27,30,31,32,33,],[-15,26,-13,-14,-16,-17,26,26,26,26,26,-11,-12,]),'COMMA':([13,15,16,17,18,21,30,31,32,33,],[-15,-13,-14,-16,-17,29,-9,-10,-11,-12,]),'RPAREN':([13,15,16,17,18,20,21,30,31,32,33,34,],[-15,-13,-14,-16,-17,28,-7,-9,-10,-11,-12,-8,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statements':([0,],[1,]),'statement':([0,1,],[2,4,]),'expr':([5,6,12,13,14,15,],[8,11,17,18,19,20,]),}
+_lr_goto_items = {'statements':([0,],[1,]),'statement':([0,1,],[2,7,]),'expr':([9,11,12,19,23,24,25,26,29,],[14,21,22,27,30,31,32,33,21,]),'print_expr':([11,29,],[20,34,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -29,13 +29,19 @@ _lr_productions = [
   ("S' -> statements","S'",1,None,None,None),
   ('statements -> statements statement','statements',2,'p_statements_many','parser.py',20),
   ('statements -> statement','statements',1,'p_statements_single','parser.py',26),
-  ('statement -> ID EQUALS expr','statement',3,'p_assignment_statement','parser.py',33),
-  ('statement -> ID LPAREN expr RPAREN','statement',4,'p_print_statement','parser.py',38),
-  ('expr -> expr PLUS expr','expr',3,'p_expr_binop','parser.py',51),
-  ('expr -> expr MINUS expr','expr',3,'p_expr_binop','parser.py',52),
-  ('expr -> expr MULT expr','expr',3,'p_expr_binop','parser.py',53),
-  ('expr -> expr DIV expr','expr',3,'p_expr_binop','parser.py',54),
-  ('expr -> NUMBER','expr',1,'p_expr_factor','parser.py',59),
-  ('expr -> ID','expr',1,'p_expr_id','parser.py',64),
-  ('expr -> STRING','expr',1,'p_expr_string','parser.py',68),
+  ('statement -> INT ID EQUALS expr','statement',4,'p_definingvariable_statement','parser.py',34),
+  ('statement -> STRING ID EQUALS expr','statement',4,'p_definingvariable_statement','parser.py',35),
+  ('statement -> ID EQUALS expr','statement',3,'p_assignment_statement','parser.py',42),
+  ('statement -> PRINT LPAREN print_expr RPAREN','statement',4,'p_print_statement','parser.py',47),
+  ('print_expr -> expr','print_expr',1,'p_prints_statement','parser.py',54),
+  ('print_expr -> expr COMMA print_expr','print_expr',3,'p_prints_statement','parser.py',55),
+  ('expr -> expr PLUS expr','expr',3,'p_expr_binop','parser.py',69),
+  ('expr -> expr MINUS expr','expr',3,'p_expr_binop','parser.py',70),
+  ('expr -> expr MULT expr','expr',3,'p_expr_binop','parser.py',71),
+  ('expr -> expr DIV expr','expr',3,'p_expr_binop','parser.py',72),
+  ('expr -> INT','expr',1,'p_expr_factor','parser.py',76),
+  ('expr -> DOUBLE','expr',1,'p_expr_factor','parser.py',77),
+  ('expr -> ID','expr',1,'p_expr_id','parser.py',82),
+  ('expr -> STRING','expr',1,'p_expr_string','parser.py',85),
+  ('expr -> BOOL','expr',1,'p_expr_bool','parser.py',89),
 ]

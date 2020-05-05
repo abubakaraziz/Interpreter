@@ -28,6 +28,15 @@ class Parser:
         '''
         p[0]=[p[1]] 
     
+
+    def p_definingvariable_statement(self,p):
+        '''
+        statement : INT ID EQUALS expr
+                  | STRING ID EQUALS expr
+        
+        '''
+        p[0]=('DEFINE',p[2],p[4]) 
+    
     def p_assignment_statement(self,p):
         '''
         statement : ID EQUALS expr 
@@ -35,11 +44,20 @@ class Parser:
         p[0]=('ASSIGN',p[1],p[3]) 
     def p_print_statement(self,p):
         '''
-        statement : ID LPAREN expr RPAREN 
+        statement : PRINT LPAREN print_expr RPAREN 
         '''
-        print("here")
-        p[0]=('PRINTS',[p[3]])
+        print("hello1")
+        p[0]=('PRINT',p[3])
 
+    def p_prints_statement(self,p):
+        '''
+        print_expr : expr
+                   | expr COMMA print_expr
+        '''
+        if len(p)==4:
+            p[0]=  [p[1]]  + p[3]
+        else:
+            p[0]=[ p[1]]
     #| expr AND expr 
     #| expr OR expr  
     #| expr AND_LOGICAL expr
@@ -53,21 +71,23 @@ class Parser:
                 | expr MULT expr
                 | expr DIV expr 
                 '''
-        print('hello')
         p[0]=('binop',p[1],p[2],p[3])
     def p_expr_factor(self,p):
-        'expr : NUMBER'
+        '''expr : INT
+                | DOUBLE'''
         p[0]=('NUM',p[1])
         
         
     def p_expr_id(self,p):
         'expr : ID'
-        print('hello')
         p[0]=('ID',p[1])
     def p_expr_string(self,p):
         'expr : STRING' 
         p[0]=('STRING',p[1])
-    
+        
+    def p_expr_bool(self,p):
+        'expr : BOOL' 
+        p[0]=('BOOL',p[1])
 
     #def p_error(self,p):
         #print("Syntax error in input!")
@@ -76,10 +96,10 @@ class Parser:
 lexer=Lexer()
 
 lexer.build()
-
-lexer.check_input("PRINT(2)")
+text='PRINT(x+2,2)'
+lexer.check_input(text)
 parser=Parser()
-print(parser.parse_text('PRINT(2+2)'))
+print(parser.parse_text(text))
 
 
 '''

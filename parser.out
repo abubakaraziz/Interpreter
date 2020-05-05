@@ -4,21 +4,18 @@ Unused terminals:
 
     AND
     AND_LOGICAL
-    BOOL
     COLON
-    COMMA
     EQUAL
     GREATER
     GREATEREQUAL
-    INT
     LESS
     LESSEQUAL
     NOT
     NOTEQUAL
+    NUMBER
     OR
     OR_LOGICAL
     PERCENT
-    PRINT
     SQUARE
 
 Grammar
@@ -26,51 +23,59 @@ Grammar
 Rule 0     S' -> statements
 Rule 1     statements -> statements statement
 Rule 2     statements -> statement
-Rule 3     statement -> ID EQUALS expr
-Rule 4     statement -> ID LPAREN expr RPAREN
-Rule 5     expr -> expr PLUS expr
-Rule 6     expr -> expr MINUS expr
-Rule 7     expr -> expr MULT expr
-Rule 8     expr -> expr DIV expr
-Rule 9     expr -> NUMBER
-Rule 10    expr -> ID
-Rule 11    expr -> STRING
+Rule 3     statement -> INT ID EQUALS expr
+Rule 4     statement -> STRING ID EQUALS expr
+Rule 5     statement -> ID EQUALS expr
+Rule 6     statement -> PRINT LPAREN print_expr RPAREN
+Rule 7     print_expr -> expr
+Rule 8     print_expr -> expr COMMA print_expr
+Rule 9     expr -> expr PLUS expr
+Rule 10    expr -> expr MINUS expr
+Rule 11    expr -> expr MULT expr
+Rule 12    expr -> expr DIV expr
+Rule 13    expr -> INT
+Rule 14    expr -> DOUBLE
+Rule 15    expr -> ID
+Rule 16    expr -> STRING
+Rule 17    expr -> BOOL
 
 Terminals, with rules where they appear
 
 AND                  : 
 AND_LOGICAL          : 
-BOOL                 : 
+BOOL                 : 17
 COLON                : 
-COMMA                : 
-DIV                  : 8
+COMMA                : 8
+DIV                  : 12
+DOUBLE               : 14
 EQUAL                : 
-EQUALS               : 3
+EQUALS               : 3 4 5
 GREATER              : 
 GREATEREQUAL         : 
-ID                   : 3 4 10
-INT                  : 
+ID                   : 3 4 5 15
+INT                  : 3 13
 LESS                 : 
 LESSEQUAL            : 
-LPAREN               : 4
-MINUS                : 6
-MULT                 : 7
+LPAREN               : 6
+MINUS                : 10
+MULT                 : 11
 NOT                  : 
 NOTEQUAL             : 
-NUMBER               : 9
+NUMBER               : 
 OR                   : 
 OR_LOGICAL           : 
 PERCENT              : 
-PLUS                 : 5
-PRINT                : 
-RPAREN               : 4
+PLUS                 : 9
+PRINT                : 6
+RPAREN               : 6
 SQUARE               : 
-STRING               : 11
+STRING               : 4 16
 error                : 
 
 Nonterminals, with rules where they appear
 
-expr                 : 3 4 5 5 6 6 7 7 8 8
+expr                 : 3 4 5 7 8 9 9 10 10 11 11 12 12
+print_expr           : 6 8
 statement            : 1 2
 statements           : 1 0
 
@@ -81,10 +86,15 @@ state 0
     (0) S' -> . statements
     (1) statements -> . statements statement
     (2) statements -> . statement
-    (3) statement -> . ID EQUALS expr
-    (4) statement -> . ID LPAREN expr RPAREN
+    (3) statement -> . INT ID EQUALS expr
+    (4) statement -> . STRING ID EQUALS expr
+    (5) statement -> . ID EQUALS expr
+    (6) statement -> . PRINT LPAREN print_expr RPAREN
 
-    ID              shift and go to state 3
+    INT             shift and go to state 3
+    STRING          shift and go to state 5
+    ID              shift and go to state 4
+    PRINT           shift and go to state 6
 
     statements                     shift and go to state 1
     statement                      shift and go to state 2
@@ -93,302 +103,561 @@ state 1
 
     (0) S' -> statements .
     (1) statements -> statements . statement
-    (3) statement -> . ID EQUALS expr
-    (4) statement -> . ID LPAREN expr RPAREN
+    (3) statement -> . INT ID EQUALS expr
+    (4) statement -> . STRING ID EQUALS expr
+    (5) statement -> . ID EQUALS expr
+    (6) statement -> . PRINT LPAREN print_expr RPAREN
 
-    ID              shift and go to state 3
+    INT             shift and go to state 3
+    STRING          shift and go to state 5
+    ID              shift and go to state 4
+    PRINT           shift and go to state 6
 
-    statement                      shift and go to state 4
+    statement                      shift and go to state 7
 
 state 2
 
     (2) statements -> statement .
 
+    INT             reduce using rule 2 (statements -> statement .)
+    STRING          reduce using rule 2 (statements -> statement .)
     ID              reduce using rule 2 (statements -> statement .)
+    PRINT           reduce using rule 2 (statements -> statement .)
     $end            reduce using rule 2 (statements -> statement .)
 
 
 state 3
 
-    (3) statement -> ID . EQUALS expr
-    (4) statement -> ID . LPAREN expr RPAREN
+    (3) statement -> INT . ID EQUALS expr
 
-    EQUALS          shift and go to state 5
-    LPAREN          shift and go to state 6
+    ID              shift and go to state 8
 
 
 state 4
 
-    (1) statements -> statements statement .
+    (5) statement -> ID . EQUALS expr
 
-    ID              reduce using rule 1 (statements -> statements statement .)
-    $end            reduce using rule 1 (statements -> statements statement .)
+    EQUALS          shift and go to state 9
 
 
 state 5
 
-    (3) statement -> ID EQUALS . expr
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (4) statement -> STRING . ID EQUALS expr
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    ID              shift and go to state 10
 
-    expr                           shift and go to state 8
 
 state 6
 
-    (4) statement -> ID LPAREN . expr RPAREN
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (6) statement -> PRINT . LPAREN print_expr RPAREN
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    LPAREN          shift and go to state 11
 
-    expr                           shift and go to state 11
 
 state 7
 
-    (10) expr -> ID .
+    (1) statements -> statements statement .
 
-    PLUS            reduce using rule 10 (expr -> ID .)
-    MINUS           reduce using rule 10 (expr -> ID .)
-    MULT            reduce using rule 10 (expr -> ID .)
-    DIV             reduce using rule 10 (expr -> ID .)
-    ID              reduce using rule 10 (expr -> ID .)
-    $end            reduce using rule 10 (expr -> ID .)
-    RPAREN          reduce using rule 10 (expr -> ID .)
+    INT             reduce using rule 1 (statements -> statements statement .)
+    STRING          reduce using rule 1 (statements -> statements statement .)
+    ID              reduce using rule 1 (statements -> statements statement .)
+    PRINT           reduce using rule 1 (statements -> statements statement .)
+    $end            reduce using rule 1 (statements -> statements statement .)
 
 
 state 8
 
-    (3) statement -> ID EQUALS expr .
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (3) statement -> INT ID . EQUALS expr
 
-    ID              reduce using rule 3 (statement -> ID EQUALS expr .)
-    $end            reduce using rule 3 (statement -> ID EQUALS expr .)
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
+    EQUALS          shift and go to state 12
 
 
 state 9
 
-    (9) expr -> NUMBER .
+    (5) statement -> ID EQUALS . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
 
-    PLUS            reduce using rule 9 (expr -> NUMBER .)
-    MINUS           reduce using rule 9 (expr -> NUMBER .)
-    MULT            reduce using rule 9 (expr -> NUMBER .)
-    DIV             reduce using rule 9 (expr -> NUMBER .)
-    ID              reduce using rule 9 (expr -> NUMBER .)
-    $end            reduce using rule 9 (expr -> NUMBER .)
-    RPAREN          reduce using rule 9 (expr -> NUMBER .)
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
 
+    expr                           shift and go to state 14
 
 state 10
 
-    (11) expr -> STRING .
+    (4) statement -> STRING ID . EQUALS expr
 
-    PLUS            reduce using rule 11 (expr -> STRING .)
-    MINUS           reduce using rule 11 (expr -> STRING .)
-    MULT            reduce using rule 11 (expr -> STRING .)
-    DIV             reduce using rule 11 (expr -> STRING .)
-    ID              reduce using rule 11 (expr -> STRING .)
-    $end            reduce using rule 11 (expr -> STRING .)
-    RPAREN          reduce using rule 11 (expr -> STRING .)
+    EQUALS          shift and go to state 19
 
 
 state 11
 
-    (4) statement -> ID LPAREN expr . RPAREN
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (6) statement -> PRINT LPAREN . print_expr RPAREN
+    (7) print_expr -> . expr
+    (8) print_expr -> . expr COMMA print_expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
 
-    RPAREN          shift and go to state 16
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
 
+    print_expr                     shift and go to state 20
+    expr                           shift and go to state 21
 
 state 12
 
-    (5) expr -> expr PLUS . expr
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (3) statement -> INT ID EQUALS . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
 
-    expr                           shift and go to state 17
+    expr                           shift and go to state 22
 
 state 13
 
-    (6) expr -> expr MINUS . expr
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (15) expr -> ID .
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    PLUS            reduce using rule 15 (expr -> ID .)
+    MINUS           reduce using rule 15 (expr -> ID .)
+    MULT            reduce using rule 15 (expr -> ID .)
+    DIV             reduce using rule 15 (expr -> ID .)
+    INT             reduce using rule 15 (expr -> ID .)
+    STRING          reduce using rule 15 (expr -> ID .)
+    ID              reduce using rule 15 (expr -> ID .)
+    PRINT           reduce using rule 15 (expr -> ID .)
+    $end            reduce using rule 15 (expr -> ID .)
+    COMMA           reduce using rule 15 (expr -> ID .)
+    RPAREN          reduce using rule 15 (expr -> ID .)
 
-    expr                           shift and go to state 18
 
 state 14
 
-    (7) expr -> expr MULT . expr
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (5) statement -> ID EQUALS expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    INT             reduce using rule 5 (statement -> ID EQUALS expr .)
+    STRING          reduce using rule 5 (statement -> ID EQUALS expr .)
+    ID              reduce using rule 5 (statement -> ID EQUALS expr .)
+    PRINT           reduce using rule 5 (statement -> ID EQUALS expr .)
+    $end            reduce using rule 5 (statement -> ID EQUALS expr .)
+    PLUS            shift and go to state 23
+    MINUS           shift and go to state 24
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
 
-    expr                           shift and go to state 19
 
 state 15
 
-    (8) expr -> expr DIV . expr
-    (5) expr -> . expr PLUS expr
-    (6) expr -> . expr MINUS expr
-    (7) expr -> . expr MULT expr
-    (8) expr -> . expr DIV expr
-    (9) expr -> . NUMBER
-    (10) expr -> . ID
-    (11) expr -> . STRING
+    (13) expr -> INT .
 
-    NUMBER          shift and go to state 9
-    ID              shift and go to state 7
-    STRING          shift and go to state 10
+    PLUS            reduce using rule 13 (expr -> INT .)
+    MINUS           reduce using rule 13 (expr -> INT .)
+    MULT            reduce using rule 13 (expr -> INT .)
+    DIV             reduce using rule 13 (expr -> INT .)
+    INT             reduce using rule 13 (expr -> INT .)
+    STRING          reduce using rule 13 (expr -> INT .)
+    ID              reduce using rule 13 (expr -> INT .)
+    PRINT           reduce using rule 13 (expr -> INT .)
+    $end            reduce using rule 13 (expr -> INT .)
+    COMMA           reduce using rule 13 (expr -> INT .)
+    RPAREN          reduce using rule 13 (expr -> INT .)
 
-    expr                           shift and go to state 20
 
 state 16
 
-    (4) statement -> ID LPAREN expr RPAREN .
+    (14) expr -> DOUBLE .
 
-    ID              reduce using rule 4 (statement -> ID LPAREN expr RPAREN .)
-    $end            reduce using rule 4 (statement -> ID LPAREN expr RPAREN .)
+    PLUS            reduce using rule 14 (expr -> DOUBLE .)
+    MINUS           reduce using rule 14 (expr -> DOUBLE .)
+    MULT            reduce using rule 14 (expr -> DOUBLE .)
+    DIV             reduce using rule 14 (expr -> DOUBLE .)
+    INT             reduce using rule 14 (expr -> DOUBLE .)
+    STRING          reduce using rule 14 (expr -> DOUBLE .)
+    ID              reduce using rule 14 (expr -> DOUBLE .)
+    PRINT           reduce using rule 14 (expr -> DOUBLE .)
+    $end            reduce using rule 14 (expr -> DOUBLE .)
+    COMMA           reduce using rule 14 (expr -> DOUBLE .)
+    RPAREN          reduce using rule 14 (expr -> DOUBLE .)
 
 
 state 17
 
-    (5) expr -> expr PLUS expr .
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (16) expr -> STRING .
 
-    PLUS            reduce using rule 5 (expr -> expr PLUS expr .)
-    MINUS           reduce using rule 5 (expr -> expr PLUS expr .)
-    ID              reduce using rule 5 (expr -> expr PLUS expr .)
-    $end            reduce using rule 5 (expr -> expr PLUS expr .)
-    RPAREN          reduce using rule 5 (expr -> expr PLUS expr .)
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-
-  ! MULT            [ reduce using rule 5 (expr -> expr PLUS expr .) ]
-  ! DIV             [ reduce using rule 5 (expr -> expr PLUS expr .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
+    PLUS            reduce using rule 16 (expr -> STRING .)
+    MINUS           reduce using rule 16 (expr -> STRING .)
+    MULT            reduce using rule 16 (expr -> STRING .)
+    DIV             reduce using rule 16 (expr -> STRING .)
+    INT             reduce using rule 16 (expr -> STRING .)
+    STRING          reduce using rule 16 (expr -> STRING .)
+    ID              reduce using rule 16 (expr -> STRING .)
+    PRINT           reduce using rule 16 (expr -> STRING .)
+    $end            reduce using rule 16 (expr -> STRING .)
+    COMMA           reduce using rule 16 (expr -> STRING .)
+    RPAREN          reduce using rule 16 (expr -> STRING .)
 
 
 state 18
 
-    (6) expr -> expr MINUS expr .
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (17) expr -> BOOL .
 
-    PLUS            reduce using rule 6 (expr -> expr MINUS expr .)
-    MINUS           reduce using rule 6 (expr -> expr MINUS expr .)
-    ID              reduce using rule 6 (expr -> expr MINUS expr .)
-    $end            reduce using rule 6 (expr -> expr MINUS expr .)
-    RPAREN          reduce using rule 6 (expr -> expr MINUS expr .)
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-
-  ! MULT            [ reduce using rule 6 (expr -> expr MINUS expr .) ]
-  ! DIV             [ reduce using rule 6 (expr -> expr MINUS expr .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
+    PLUS            reduce using rule 17 (expr -> BOOL .)
+    MINUS           reduce using rule 17 (expr -> BOOL .)
+    MULT            reduce using rule 17 (expr -> BOOL .)
+    DIV             reduce using rule 17 (expr -> BOOL .)
+    INT             reduce using rule 17 (expr -> BOOL .)
+    STRING          reduce using rule 17 (expr -> BOOL .)
+    ID              reduce using rule 17 (expr -> BOOL .)
+    PRINT           reduce using rule 17 (expr -> BOOL .)
+    $end            reduce using rule 17 (expr -> BOOL .)
+    COMMA           reduce using rule 17 (expr -> BOOL .)
+    RPAREN          reduce using rule 17 (expr -> BOOL .)
 
 
 state 19
 
-    (7) expr -> expr MULT expr .
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (4) statement -> STRING ID EQUALS . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
 
-    PLUS            reduce using rule 7 (expr -> expr MULT expr .)
-    MINUS           reduce using rule 7 (expr -> expr MULT expr .)
-    MULT            reduce using rule 7 (expr -> expr MULT expr .)
-    DIV             reduce using rule 7 (expr -> expr MULT expr .)
-    ID              reduce using rule 7 (expr -> expr MULT expr .)
-    $end            reduce using rule 7 (expr -> expr MULT expr .)
-    RPAREN          reduce using rule 7 (expr -> expr MULT expr .)
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
 
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! MULT            [ shift and go to state 14 ]
-  ! DIV             [ shift and go to state 15 ]
-
+    expr                           shift and go to state 27
 
 state 20
 
-    (8) expr -> expr DIV expr .
-    (5) expr -> expr . PLUS expr
-    (6) expr -> expr . MINUS expr
-    (7) expr -> expr . MULT expr
-    (8) expr -> expr . DIV expr
+    (6) statement -> PRINT LPAREN print_expr . RPAREN
 
-    PLUS            reduce using rule 8 (expr -> expr DIV expr .)
-    MINUS           reduce using rule 8 (expr -> expr DIV expr .)
-    MULT            reduce using rule 8 (expr -> expr DIV expr .)
-    DIV             reduce using rule 8 (expr -> expr DIV expr .)
-    ID              reduce using rule 8 (expr -> expr DIV expr .)
-    $end            reduce using rule 8 (expr -> expr DIV expr .)
-    RPAREN          reduce using rule 8 (expr -> expr DIV expr .)
+    RPAREN          shift and go to state 28
 
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! MULT            [ shift and go to state 14 ]
-  ! DIV             [ shift and go to state 15 ]
+
+state 21
+
+    (7) print_expr -> expr .
+    (8) print_expr -> expr . COMMA print_expr
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    RPAREN          reduce using rule 7 (print_expr -> expr .)
+    COMMA           shift and go to state 29
+    PLUS            shift and go to state 23
+    MINUS           shift and go to state 24
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
+
+
+state 22
+
+    (3) statement -> INT ID EQUALS expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    INT             reduce using rule 3 (statement -> INT ID EQUALS expr .)
+    STRING          reduce using rule 3 (statement -> INT ID EQUALS expr .)
+    ID              reduce using rule 3 (statement -> INT ID EQUALS expr .)
+    PRINT           reduce using rule 3 (statement -> INT ID EQUALS expr .)
+    $end            reduce using rule 3 (statement -> INT ID EQUALS expr .)
+    PLUS            shift and go to state 23
+    MINUS           shift and go to state 24
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
+
+
+state 23
+
+    (9) expr -> expr PLUS . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
+
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
+
+    expr                           shift and go to state 30
+
+state 24
+
+    (10) expr -> expr MINUS . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
+
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
+
+    expr                           shift and go to state 31
+
+state 25
+
+    (11) expr -> expr MULT . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
+
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
+
+    expr                           shift and go to state 32
+
+state 26
+
+    (12) expr -> expr DIV . expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
+
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
+
+    expr                           shift and go to state 33
+
+state 27
+
+    (4) statement -> STRING ID EQUALS expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    INT             reduce using rule 4 (statement -> STRING ID EQUALS expr .)
+    STRING          reduce using rule 4 (statement -> STRING ID EQUALS expr .)
+    ID              reduce using rule 4 (statement -> STRING ID EQUALS expr .)
+    PRINT           reduce using rule 4 (statement -> STRING ID EQUALS expr .)
+    $end            reduce using rule 4 (statement -> STRING ID EQUALS expr .)
+    PLUS            shift and go to state 23
+    MINUS           shift and go to state 24
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
+
+
+state 28
+
+    (6) statement -> PRINT LPAREN print_expr RPAREN .
+
+    INT             reduce using rule 6 (statement -> PRINT LPAREN print_expr RPAREN .)
+    STRING          reduce using rule 6 (statement -> PRINT LPAREN print_expr RPAREN .)
+    ID              reduce using rule 6 (statement -> PRINT LPAREN print_expr RPAREN .)
+    PRINT           reduce using rule 6 (statement -> PRINT LPAREN print_expr RPAREN .)
+    $end            reduce using rule 6 (statement -> PRINT LPAREN print_expr RPAREN .)
+
+
+state 29
+
+    (8) print_expr -> expr COMMA . print_expr
+    (7) print_expr -> . expr
+    (8) print_expr -> . expr COMMA print_expr
+    (9) expr -> . expr PLUS expr
+    (10) expr -> . expr MINUS expr
+    (11) expr -> . expr MULT expr
+    (12) expr -> . expr DIV expr
+    (13) expr -> . INT
+    (14) expr -> . DOUBLE
+    (15) expr -> . ID
+    (16) expr -> . STRING
+    (17) expr -> . BOOL
+
+    INT             shift and go to state 15
+    DOUBLE          shift and go to state 16
+    ID              shift and go to state 13
+    STRING          shift and go to state 17
+    BOOL            shift and go to state 18
+
+    expr                           shift and go to state 21
+    print_expr                     shift and go to state 34
+
+state 30
+
+    (9) expr -> expr PLUS expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    PLUS            reduce using rule 9 (expr -> expr PLUS expr .)
+    MINUS           reduce using rule 9 (expr -> expr PLUS expr .)
+    INT             reduce using rule 9 (expr -> expr PLUS expr .)
+    STRING          reduce using rule 9 (expr -> expr PLUS expr .)
+    ID              reduce using rule 9 (expr -> expr PLUS expr .)
+    PRINT           reduce using rule 9 (expr -> expr PLUS expr .)
+    $end            reduce using rule 9 (expr -> expr PLUS expr .)
+    COMMA           reduce using rule 9 (expr -> expr PLUS expr .)
+    RPAREN          reduce using rule 9 (expr -> expr PLUS expr .)
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
+
+  ! MULT            [ reduce using rule 9 (expr -> expr PLUS expr .) ]
+  ! DIV             [ reduce using rule 9 (expr -> expr PLUS expr .) ]
+  ! PLUS            [ shift and go to state 23 ]
+  ! MINUS           [ shift and go to state 24 ]
+
+
+state 31
+
+    (10) expr -> expr MINUS expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    PLUS            reduce using rule 10 (expr -> expr MINUS expr .)
+    MINUS           reduce using rule 10 (expr -> expr MINUS expr .)
+    INT             reduce using rule 10 (expr -> expr MINUS expr .)
+    STRING          reduce using rule 10 (expr -> expr MINUS expr .)
+    ID              reduce using rule 10 (expr -> expr MINUS expr .)
+    PRINT           reduce using rule 10 (expr -> expr MINUS expr .)
+    $end            reduce using rule 10 (expr -> expr MINUS expr .)
+    COMMA           reduce using rule 10 (expr -> expr MINUS expr .)
+    RPAREN          reduce using rule 10 (expr -> expr MINUS expr .)
+    MULT            shift and go to state 25
+    DIV             shift and go to state 26
+
+  ! MULT            [ reduce using rule 10 (expr -> expr MINUS expr .) ]
+  ! DIV             [ reduce using rule 10 (expr -> expr MINUS expr .) ]
+  ! PLUS            [ shift and go to state 23 ]
+  ! MINUS           [ shift and go to state 24 ]
+
+
+state 32
+
+    (11) expr -> expr MULT expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    PLUS            reduce using rule 11 (expr -> expr MULT expr .)
+    MINUS           reduce using rule 11 (expr -> expr MULT expr .)
+    MULT            reduce using rule 11 (expr -> expr MULT expr .)
+    DIV             reduce using rule 11 (expr -> expr MULT expr .)
+    INT             reduce using rule 11 (expr -> expr MULT expr .)
+    STRING          reduce using rule 11 (expr -> expr MULT expr .)
+    ID              reduce using rule 11 (expr -> expr MULT expr .)
+    PRINT           reduce using rule 11 (expr -> expr MULT expr .)
+    $end            reduce using rule 11 (expr -> expr MULT expr .)
+    COMMA           reduce using rule 11 (expr -> expr MULT expr .)
+    RPAREN          reduce using rule 11 (expr -> expr MULT expr .)
+
+  ! PLUS            [ shift and go to state 23 ]
+  ! MINUS           [ shift and go to state 24 ]
+  ! MULT            [ shift and go to state 25 ]
+  ! DIV             [ shift and go to state 26 ]
+
+
+state 33
+
+    (12) expr -> expr DIV expr .
+    (9) expr -> expr . PLUS expr
+    (10) expr -> expr . MINUS expr
+    (11) expr -> expr . MULT expr
+    (12) expr -> expr . DIV expr
+
+    PLUS            reduce using rule 12 (expr -> expr DIV expr .)
+    MINUS           reduce using rule 12 (expr -> expr DIV expr .)
+    MULT            reduce using rule 12 (expr -> expr DIV expr .)
+    DIV             reduce using rule 12 (expr -> expr DIV expr .)
+    INT             reduce using rule 12 (expr -> expr DIV expr .)
+    STRING          reduce using rule 12 (expr -> expr DIV expr .)
+    ID              reduce using rule 12 (expr -> expr DIV expr .)
+    PRINT           reduce using rule 12 (expr -> expr DIV expr .)
+    $end            reduce using rule 12 (expr -> expr DIV expr .)
+    COMMA           reduce using rule 12 (expr -> expr DIV expr .)
+    RPAREN          reduce using rule 12 (expr -> expr DIV expr .)
+
+  ! PLUS            [ shift and go to state 23 ]
+  ! MINUS           [ shift and go to state 24 ]
+  ! MULT            [ shift and go to state 25 ]
+  ! DIV             [ shift and go to state 26 ]
+
+
+state 34
+
+    (8) print_expr -> expr COMMA print_expr .
+
+    RPAREN          reduce using rule 8 (print_expr -> expr COMMA print_expr .)
 

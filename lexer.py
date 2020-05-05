@@ -12,12 +12,8 @@ import re
 class Lexer:
 
     #keywords
-    keywords={
-    'print':'PRINT',
-    'int': 'INT',
-    'string':'STRING',
-    'bool' : 'BOOL'
-    }
+    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE'}
+    
     NUMERICAL_OPERATORS=['PLUS','MINUS','DIV','MULT','SQUARE','PERCENT','EQUALS']
     LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','NOT','AND','OR','AND_LOGICAL','OR_LOGICAL']
     PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA']
@@ -43,8 +39,9 @@ class Lexer:
     t_AND_LOGICAL=r'&&'
     t_OR_LOGICAL=r'\|\|'
     t_NOT=r'\!'
-
+       
     #PARENTHESIS
+    t_PRINT=r'PRINT'
     t_LPAREN=r'\('
     t_RPAREN=r'\)'
     t_COLON=r'\;'
@@ -52,20 +49,33 @@ class Lexer:
     #OTHERS
     t_ignore=' \t' 
 
+
+     
+    #Boolean
+    def t_BOOL(self,t):
+        r'(true|false)'
+        mapping={"true":True,"false":False}
+
+        t.value=mapping[t.value]
+        return t 
     def t_ID(self,t):   
         r'[a-zA-Z_][a-zA-Z0-9_]*'
-
         if t.value in self.keywords:
             t.type=self.keywords[t.value]
         return t
-
+    
     def t_STRING(self,t):
         r'"[^"]*"'
         t.value=t.value[1:-1]
         return t
 
-
-    def t_NUMBER(self,t):
+    #numbers
+    def t_DOUBLE(self,t):
+        'hello'
+        r'\d+\.\d+'
+        t.value=float(t.value)
+        return t
+    def t_INT(self,t):
         r'\d+'
         t.value=int(t.value)
         return t
