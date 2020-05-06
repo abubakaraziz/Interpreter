@@ -6,10 +6,15 @@ class Parser:
         
     def __init__(self):
         self.parser=yacc.yacc(module=self)
-    
+     
     def parse_text(self,text):
        return self.parser.parse(text)
+    def check_tokens(self,text): 
+        lexer=Lexer()
+        lexer.build()
+        lexer.check_input(text)
 
+    
     precedence=(
         ('left','PLUS','MINUS'),
         ('left','MULT','DIV'),
@@ -24,19 +29,27 @@ class Parser:
     def p_statements_single(self,p):
         
         '''
-        statements : statement 
+        statements : statement COLON 
         '''
         p[0]=[p[1]] 
     
 
     def p_definingvariable_statement(self,p):
         '''
-        statement : INT ID EQUALS expr
-                  | STRING ID EQUALS expr
-        
+        statement : INT ID EQUALS LPAREN expr RPAREN
+                  | INT ID EQUALS expr 
+                  | STRING ID EQUALS LPAREN expr RPAREN
+                  | STRING ID EQUALS expr 
+                  | BOOL ID EQUALS LPAREN expr RPAREN
+                  | BOOL ID EQUALS expr
+                  | DOUBLE ID EQUALS LPAREN expr RPAREN
+                  | DOUBLE ID EQUALS expr
         '''
-        p[0]=('DEFINE',p[2],p[4]) 
-    
+        print(len(p))
+        if len(p)==5:
+            p[0]=('DEFINE',p[2],p[4]) 
+        elif len(p)==7:    
+            p[0]=('DEFINE',p[2],p[5]) 
     def p_assignment_statement(self,p):
         '''
         statement : ID EQUALS expr 
@@ -58,6 +71,10 @@ class Parser:
             p[0]=  [p[1]]  + p[3]
         else:
             p[0]=[ p[1]]
+    def t_newline(t):
+        r'\n+'
+        t.lexer.lineno += len(t.value)
+
     #| expr AND expr 
     #| expr OR expr  
     #| expr AND_LOGICAL expr
@@ -72,34 +89,29 @@ class Parser:
                 | expr DIV expr 
                 '''
         p[0]=('binop',p[1],p[2],p[3])
+    
+     
     def p_expr_factor(self,p):
-        '''expr : INT
-                | DOUBLE'''
-        p[0]=('NUM',p[1])
+        '''expr : 
+                | INT  
+                | BOOL 
+                | STRING
+                | INT DOT INT 
+                '''
+        if len(p)==2:
+            p[0]=('VAL',p[1])
+        elif len(p)==4:
+            print('here')
+            p[0]=('DOUBLE',p[1],p[3])
         
         
     def p_expr_id(self,p):
         'expr : ID'
         p[0]=('ID',p[1])
-    def p_expr_string(self,p):
-        'expr : STRING' 
-        p[0]=('STRING',p[1])
         
-    def p_expr_bool(self,p):
-        'expr : BOOL' 
-        p[0]=('BOOL',p[1])
-
     #def p_error(self,p):
         #print("Syntax error in input!")
     tokens=Lexer.tokens
-    #print(tokens)
-lexer=Lexer()
-
-lexer.build()
-text='PRINT(x+2,2)'
-lexer.check_input(text)
-parser=Parser()
-print(parser.parse_text(text))
 
 
 '''

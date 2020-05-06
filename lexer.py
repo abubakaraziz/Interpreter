@@ -16,7 +16,7 @@ class Lexer:
     
     NUMERICAL_OPERATORS=['PLUS','MINUS','DIV','MULT','SQUARE','PERCENT','EQUALS']
     LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','NOT','AND','OR','AND_LOGICAL','OR_LOGICAL']
-    PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA']
+    PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA','DOT']
     OTHERS=['ID','NUMBER']
     tokens=[]
     tokens.extend(NUMERICAL_OPERATORS)
@@ -41,22 +41,36 @@ class Lexer:
     t_NOT=r'\!'
        
     #PARENTHESIS
-    t_PRINT=r'PRINT'
+    #t_PRINT=r'PRINT'
     t_LPAREN=r'\('
     t_RPAREN=r'\)'
     t_COLON=r'\;'
     t_COMMA=r'\,'
+    t_DOT=r'\.'
     #OTHERS
     t_ignore=' \t' 
+    
+    #numbers
+    def t_DOUBLE(self,t):
+        'hello'
+        r'((\d+)(\.\d+)(e(\+|-)?(\d+))? | (\d+)e(\+|-)?(\d+))([lL]|[fF])?'
 
+        t.value=float(t.value)  
+        return t
+    
+    def t_INT(self,t):
+        r'\d+'
+        t.value=int(t.value)
+        return t
 
      
     #Boolean
     def t_BOOL(self,t):
-        r'(true|false)'
-        mapping={"true":True,"false":False}
-
-        t.value=mapping[t.value]
+        r'(TRUE|FALSE)'
+        if t.value=="TRUE":
+            t.value=True
+        elif t.value=="FALSE":
+            t.value=False
         return t 
     def t_ID(self,t):   
         r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -69,16 +83,6 @@ class Lexer:
         t.value=t.value[1:-1]
         return t
 
-    #numbers
-    def t_DOUBLE(self,t):
-        'hello'
-        r'\d+\.\d+'
-        t.value=float(t.value)
-        return t
-    def t_INT(self,t):
-        r'\d+'
-        t.value=int(t.value)
-        return t
      # Error handling rule
     def t_error(self,t):
          print("Illegal character '%s'" % t.value[0])
