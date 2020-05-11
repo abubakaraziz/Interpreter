@@ -6,34 +6,41 @@ import re
 #https://my.eng.utah.edu/~cs3100/lectures/l14/ply-3.4/doc/ply.html
 #string_match=re.search(r'"[^"]*"',match)
 #print(string_match.group(0))
-
+#I used state example givefn at www.dabeaz to implement recusrive brackets
 
 
 class Lexer:
+    
 
     #keywords
-    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE'}
+    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE','DO':'DO','WHILE':'WHILE'}
     
     NUMERICAL_OPERATORS=['PLUS','MINUS','DIV','MULT','SQUARE','PERCENT','EQUALS']
     LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','NOT','AND','OR','AND_LOGICAL','OR_LOGICAL']
+     
     PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA','DOT']
+    LOOP=['DO','WHILE'] 
     OTHERS=['ID','NUMBER']
+    CURLY=['LBRACE','RBRACE','CONTENT','NOSPACE']
     tokens=[]
     tokens.extend(NUMERICAL_OPERATORS)
     tokens.extend(LOGICAL_OPERATORS)
     tokens.extend(PARENTHESIS)
     tokens.extend(OTHERS)
+    tokens.extend(CURLY)
     tokens+=keywords.values()
    #NUMERICAL OPERATOR  
     t_PLUS=r'\+'
     t_MINUS=r'-'
     t_DIV=r'/'
     t_MULT=r'\*'
-     
+    t_SQUARE=r'\^' 
    #LOGICAL OPERATOR
     t_EQUALS=r'='
     t_LESS=r'<'
-    t_GREATER=r'>'
+    t_LESSEQUAL=r'<='
+    t_GREATER=r'>' 
+    t_GREATEREQUAL=r'>='
     t_AND=r'&'
     t_OR=r'\|'
     t_AND_LOGICAL=r'&&'
@@ -49,6 +56,11 @@ class Lexer:
     t_DOT=r'\.'
     #OTHERS
     t_ignore=' \t' 
+    
+    #LOOP
+    t_WHILE=r'WHILE'
+    t_DO=r'DO'
+    
     
     #numbers
     def t_DOUBLE(self,t):
