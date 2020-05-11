@@ -16,7 +16,7 @@ class Parser:
 
     
     precedence=(
-        ('nonassoc','LESSEQUAL','GREATEREQUAL'),
+        ('nonassoc','LESSEQUAL','GREATEREQUAL','NOT','LESS','GREATER','LOGICAL_EQUAL','NOTEQUAL'),
         ('left','PLUS','MINUS'),
         ('left','MULT','DIV','SQUARE'),
         ) 
@@ -52,7 +52,7 @@ class Parser:
         elif len(p)==4: 
             p[0]=('ASSIGN',p[1],p[3]) 
         elif len(p)==2: 
-            p[0]=('BINOP',p[1]) 
+            p[0]=p[1] 
 
 
     
@@ -85,7 +85,6 @@ class Parser:
 
     #| expr LESS expr
     #| expr GREATER expr'''
-
     def p_expr_brackets(self,p):
         ''' 
             expr :   LPAREN expr RPAREN
@@ -100,20 +99,19 @@ class Parser:
                 | expr DIV expr 
                 | expr SQUARE expr
                 | expr LESSEQUAL expr
-
                 | expr GREATEREQUAL expr
-
-                        '''
-        if (len(p)==4):
-            p[0]=('binop',p[1],p[2],p[3])
-        elif(len(p)==3):
-            p[0]=p[2]
-    
-        ''' 
                 | expr LESS expr
                 | expr GREATER expr 
-                | NOT expr 
-        '''
+                | expr LOGICAL_EQUAL expr
+                | expr NOTEQUAL expr
+                | expr AND_LOGICAL expr
+                | expr OR_LOGICAL expr
+
+                        '''
+        print(p)
+        if (len(p)==4):
+            p[0]=('binop',p[1],p[2],p[3])
+    
     
     def p_expr_factor(self,p):
         '''expr : 
@@ -121,18 +119,24 @@ class Parser:
                 | BOOL 
                 | STRING
                 | MINUS INT
+                | NOT BOOL
+                | NOT INT
+                | NOT STRING 
                 | INT DOT INT 
                 '''
         if len(p)==2:
             p[0]=('VAL',p[1])
         elif len(p)==3: 
-            p[0]=('NEGVAL',p[2])
+            if p[1]=='MINUS':
+                p[0]=('NEGVAL',p[2])
+            elif p[1]=='NOT': 
+                p[0]=('NOT',p[2])
         elif len(p)==4:
             print('here')
             p[0]=('DOUBLE',p[1],p[3])
         
         
-        
+     
     def p_expr_id(self,p):
         'expr : ID'
         p[0]=('ID',p[1])

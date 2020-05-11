@@ -52,8 +52,17 @@ class Interpreter():
             elif operator=='<':
                 return left_val<right_val
             elif operator=='>':
-                return left_val>right_val
-            
+                return left_val>right_val 
+            elif operator=='==':
+                return left_val==right_val
+            elif operator=='AND':
+                return (left_val and right_val)
+            elif operator=='OR':
+                return (left_val or right_val)
+
+        elif nodetype=='NOT':
+            value=not tree[1]
+            return value 
         elif nodetype=="ID":
             var_val=self.env[tree[1]]
             return var_val
@@ -61,7 +70,12 @@ class Interpreter():
         print(self.env)
     def interpret(self):
         if self.trees[0]=='binop':
-            return self.eval_expression(self.trees)
+            val=self.eval_expression(self.trees)
+            return val 
+        elif self.trees[0]=='NOT':
+            print(self.trees[1])
+            value=not self.trees[1]
+            return value 
         elif self.trees[0]=='DEFINE':
             variable_name=self.trees[1]
             expr=self.trees[2]
@@ -136,9 +150,12 @@ def check_while_loop():
      
     Interpret=Interpreter() 
 
-    a_assign=parser.parse_text('3+3;') 
-    print(a_assign)
-    Interpret.assign_tree(a_assign[0]) 
+    bool_assign=parser.parse_text('BOOL d=False;') 
+    Interpret.assign_tree(bool_assign[0]) 
+    (Interpret.interpret())
+    print_assign=parser.parse_text('PRINT(NOT True);')  
+    print(print_assign)
+    Interpret.assign_tree(print_assign[0]) 
     Interpret.interpret()
     Interpret.print_variables()
 check_while_loop()
