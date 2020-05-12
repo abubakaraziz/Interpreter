@@ -14,9 +14,9 @@ class Interpreter():
         #print(type(value))
         if type(value)==bool:
             if value==True:
-                return "TRUE"
+                return True 
             elif value==False:
-                return "FALSE"
+                return False 
         elif type(value)==str:
             return str(value)
         elif type(value)==int:
@@ -55,12 +55,15 @@ class Interpreter():
                 return left_val>right_val 
             elif operator=='==':
                 return left_val==right_val
-            elif operator=='AND':
+            elif operator=='&':
                 return (left_val and right_val)
-            elif operator=='OR':
-                return (left_val or right_val)
+            elif operator=='|':
+                return (left_val or right_val) 
+            elif operator=='!=':
+                return (left_val != right_val)
 
         elif nodetype=='NOT':
+            print(tree[1])
             value=not tree[1]
             return value 
         elif nodetype=="ID":
@@ -68,37 +71,54 @@ class Interpreter():
             return var_val
     def print_variables(self):
         print(self.env)
+    def execute_statements(self,statements): 
+        for tree in statements:
+            print(tree)
+            if tree[0]=='binop':
+                val=self.eval_expression(tree)
+                return val 
+            elif tree[0]=='NOT':
+                print(tree[1])
+                value=not tree[1]
+                return value 
+            elif tree[0]=='DEFINE':
+                variable_name=tree[1]
+                expr=tree[2]
+                print(self.env)
+                value=self.eval_expression(tree[2])
+                if variable_name not in self.env:
+                    self.env[variable_name]=value
+                else:
+                    print("Redeclaration Error")
+            elif tree[0]=='PRINT':
+                nodes_to_print=tree[1]
+                for node in nodes_to_print:
+                    value=self.eval_expression(node)
+                    print(value,end='')
+                    print(" ",end='')
+                print("")
+            elif tree[0]=='ASSIGN':            
+                variable_name=tree[1] 
+                value=self.eval_expression(tree[2]) 
+                if variable_name in self.env:
+                    self.env[variable_name]=value
+                else:
+                    print("Variable not Initialised")
+
     def interpret(self):
-        if self.trees[0]=='binop':
-            val=self.eval_expression(self.trees)
-            return val 
-        elif self.trees[0]=='NOT':
-            print(self.trees[1])
-            value=not self.trees[1]
-            return value 
-        elif self.trees[0]=='DEFINE':
-            variable_name=self.trees[1]
-            expr=self.trees[2]
-            value=self.eval_expression(self.trees[2])
-            if variable_name not in self.env:
-                self.env[variable_name]=value
-            else:
-                print("Redeclaration Error")
-        elif self.trees[0]=='PRINT':
-            nodes_to_print=self.trees[1]
-            for node in nodes_to_print:
-                value=self.eval_expression(node)
-                print(value,end='')
-                print(" ",end='')
-            print("")
-        elif self.trees[0]=='ASSIGN':            
-            variable_name=self.trees[1] 
-            value=self.eval_expression(self.trees[2]) 
-            if variable_name in self.env:
-                self.env[variable_name]=value
-            else:
-                print("Variable not Initialised")
-    
+        if self.trees[0]=="statements":
+            statements=self.trees[1]
+            self.execute_statements(statements)
+        elif self.trees[0]=="loop":
+            first_statements=self.trees[1]
+            print(first_statements)
+            loop_statements=self.trees[2]
+            print(loop_statements)
+            loop_condition=self.trees[3]
+            print(loop_condition)
+            last_statements=self.trees[4]
+            print(last_statements)
+
 def testing_variables():
 
     lexer=Lexer()
@@ -142,7 +162,7 @@ def testing_variables():
     (Interpret.interpret())
     Interpret.print_variables()
 
-def check_while_loop():
+def check_expr():
     
     lexer=Lexer()
     lexer.build()
@@ -153,9 +173,21 @@ def check_while_loop():
     bool_assign=parser.parse_text('BOOL d=False;') 
     Interpret.assign_tree(bool_assign[0]) 
     (Interpret.interpret())
-    print_assign=parser.parse_text('PRINT(NOT True);')  
+    print_assign=parser.parse_text('(2 & 2 ) | (3 & (2 &2));')  
     print(print_assign)
     Interpret.assign_tree(print_assign[0]) 
+    print(Interpret.interpret())
+    Interpret.print_variables()
+
+def check_while_loop():
+
+    lexer=Lexer()
+    lexer.build()
+    parser=Parser()
+     
+    Interpret=Interpreter() 
+    while_loop_assign=parser.parse_text(' DO {INT a=2; } WHILE (i<3)  ') 
+    Interpret.assign_tree(while_loop_assign) 
     Interpret.interpret()
     Interpret.print_variables()
 check_while_loop()
@@ -165,18 +197,14 @@ def testing_expressions():
       
     Interpret=Interpreter() 
     parser=Parser()
-    double_assign=parser.parse_text('DOUBLE z=1;' )
-    bool_assign=parser.parse_text('DOUBLE d= 2^2;')
-    print_assign=parser.parse_text('PRINT(d)')
-    
-    Interpret.assign_tree(double_assign[0])
+    a_assign=parser.parse_text('INT a=1;INT b=4;b=b+1;DOUBLE c=(1.5+0.5+2);DOUBLE determinant= b^2-4*a*c;DOUBLE quadratic_root1=(determinant^0.5-b)/(2.0*a);PRINT (quadratic_root1);PRINT("hello");')
+    print(a_assign)  
+    Interpret.assign_tree(a_assign)
     Interpret.interpret()
     Interpret.print_variables() 
-    Interpret.assign_tree(bool_assign[0]) 
-    Interpret.interpret() 
     #Interpret.assign_tree(print_assign[0]) 
     #(Interpret.interpret())
-
+#testing_expressions()
 def testing():
 
     lexer=Lexer()

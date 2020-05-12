@@ -13,10 +13,10 @@ class Lexer:
     
 
     #keywords
-    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE','DO':'DO','WHILE':'WHILE','NOT':'NOT','AND':'AND','OR':'OR'}
+    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE','DO':'DO','WHILE':'WHILE','NOT':'NOT'}
     
     NUMERICAL_OPERATORS=['PLUS','MINUS','DIV','MULT','SQUARE','PERCENT','EQUALS']
-    LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','AND','OR','AND_LOGICAL','OR_LOGICAL','LOGICAL_EQUAL']
+    LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','AND_LOGICAL','OR_LOGICAL','LOGICAL_EQUAL']
      
     PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA','DOT']
     LOOP=['DO','WHILE'] 
@@ -42,13 +42,13 @@ class Lexer:
     t_LESSEQUAL=r'<='
     t_GREATER=r'>' 
     t_GREATEREQUAL=r'>='
-    t_AND=r'&'
-    t_OR=r'\|'
-    t_AND_LOGICAL=r'AND'
-    t_OR_LOGICAL=r'OR'
+    t_AND_LOGICAL=r'\&'
+    t_OR_LOGICAL=r'\|'
     t_NOT=r'NOT'
     t_NOTEQUAL=r'!='  
     #PARENTHESIS
+    t_LBRACE=r'\{'
+    t_RBRACE=r'\}'
     #t_PRINT=r'PRINT'
     t_LPAREN=r'\('
     t_RPAREN=r'\)'

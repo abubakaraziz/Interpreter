@@ -16,13 +16,37 @@ class Parser:
 
     
     precedence=(
-        ('nonassoc','LESSEQUAL','GREATEREQUAL','NOT','LESS','GREATER','LOGICAL_EQUAL','NOTEQUAL'),
+        ('nonassoc','LESSEQUAL','GREATEREQUAL','LESS','GREATER','LOGICAL_EQUAL','AND_LOGICAL','OR_LOGICAL','NOTEQUAL'),
+        ('nonassoc','NOT'),
         ('left','PLUS','MINUS'),
-        ('left','MULT','DIV','SQUARE'),
+        ('left','MULT','DIV'),
+        ('left','SQUARE')
         ) 
     #Statements 
     
-     
+    def p_program(self,p):
+        '''
+        program : program DO LBRACE program RBRACE WHILE loop_conditions program 
+                | statements
+                | empty
+        '''
+        if len(p)==1:
+            p[0]=p[1]
+        if len(p)==2:
+            p[0]=('statements',p[1])
+        elif len(p)==9:
+            p[0]=('loop',p[1],p[4],p[7],p[8])
+
+    def p_empty(self,p):
+        '''
+        empty : 
+        '''
+        pass
+    def p_loop_conditions(self,p):
+        '''
+        loop_conditions : LPAREN expr RPAREN 
+        '''
+        p[0]=('loop_condition',p[2])
     def p_statements_many(self,p):
         '''
         statements : statements statement COLON
@@ -43,6 +67,8 @@ class Parser:
                   | DOUBLE ID EQUALS expr
                   | ID EQUALS expr 
                   | expr
+                
+
         '''
         print(len(p))
         if len(p)==5:
@@ -78,10 +104,6 @@ class Parser:
         r'\n+'
         t.lexer.lineno += len(t.value)
 
-    #| expr AND expr 
-    #| expr OR expr  
-    #| expr AND_LOGICAL expr
-    #| expr OR_LOGICAL expr
 
     #| expr LESS expr
     #| expr GREATER expr'''
@@ -108,9 +130,7 @@ class Parser:
                 | expr OR_LOGICAL expr
 
                         '''
-        print(p)
-        if (len(p)==4):
-            p[0]=('binop',p[1],p[2],p[3])
+        p[0]=('binop',p[1],p[2],p[3])
     
     
     def p_expr_factor(self,p):
@@ -118,10 +138,8 @@ class Parser:
                 | INT  
                 | BOOL 
                 | STRING
-                | MINUS INT
                 | NOT BOOL
                 | NOT INT
-                | NOT STRING 
                 | INT DOT INT 
                 '''
         if len(p)==2:
