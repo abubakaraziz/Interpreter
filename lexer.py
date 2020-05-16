@@ -13,7 +13,7 @@ class Lexer:
     
 
     #keywords
-    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE','DO':'DO','WHILE':'WHILE','NOT':'NOT'}
+    keywords={ 'PRINT':'PRINT','INT':'INT','STRING':'STRING','BOOL':'BOOL','DOUBLE':'DOUBLE','DO':'DO','WHILE':'WHILE','NOT':'NOT','STRUCT':'STRUCT'}
     
     NUMERICAL_OPERATORS=['PLUS','MINUS','DIV','MULT','SQUARE','PERCENT','EQUALS']
     LOGICAL_OPERATORS=['LESS', 'GREATER','LESSEQUAL','GREATEREQUAL','NOTEQUAL','EQUAL','AND_LOGICAL','OR_LOGICAL','LOGICAL_EQUAL']
@@ -62,7 +62,8 @@ class Lexer:
     t_WHILE=r'WHILE'
     t_DO=r'DO'
     
-    
+    #STRUCT
+    t_STRUCT=r'STRUCT'
     #numbers
     def t_DOUBLE(self,t):
         'hello'
@@ -75,7 +76,6 @@ class Lexer:
         r'\d+'
         t.value=int(t.value)
         return t
-
      
     #Boolean
     def t_BOOL(self,t):
@@ -98,7 +98,7 @@ class Lexer:
 
      # Error handling rule
     def t_error(self,t):
-         print("Illegal character '%s'" % t.value[0])
+         #print("Illegal character '%s'" % t.value[0])
          t.lexer.skip(1)
     def check_input(self,input_text):
         self.lexer.input(input_text)
