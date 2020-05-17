@@ -18,12 +18,13 @@ class Interpreter():
             return str(value)
         elif type(value)==int:
             return int(value)
+        elif type(value)==float:
+            return float(value)
     def eval_expression(self,tree):
         nodetype=tree[0] 
         if nodetype=='VAL':
             return  self.get_value(tree[1])
         elif nodetype=='DOUBLE':
-            double=str(tree[1])+"."+str(tree[2])
             double=float(double)
             return double
         elif nodetype=='NEGVAL':
@@ -33,9 +34,14 @@ class Interpreter():
             left_val=self.eval_expression(tree[1])
             right_val=self.eval_expression(tree[3])
             if operator=='+' and right_val=='+':
-                self.env[tree[1][1]]=self.env[tree[1][1]]+1; 
+                return left_val+1 
             elif operator=='+':
-                return left_val +right_val
+                try:
+                    return left_val +right_val
+                
+                except Exception as e:
+                    print('TypeError')
+                    sys.exit()
             elif operator=='-':
                 return left_val-right_val
             elif operator=='*':
@@ -65,8 +71,22 @@ class Interpreter():
             value=not tree[1]
             return value 
         elif nodetype=="ID":
-            var_val=self.env[tree[1]]
-            return var_val
+            variable_name=tree[1]
+            if '.' in variable_name:
+                variable_name=variable_name.split('.')
+                structname=variable_name[0]
+                structkey=variable_name[1]
+                if structname in self.env:
+                    try:
+                        return self.env[structname][structkey]
+                    except Exception as e:
+                        print("Attribute Error")
+                        sys.exit()
+            
+            else:
+
+                var_val=self.env[tree[1]]
+                return var_val
         elif nodetype=="+":
             return "+"
     def print_variables(self):
@@ -84,6 +104,7 @@ class Interpreter():
                 expr=tree[2]
                 value=self.eval_expression(tree[2])
                 if variable_name not in self.env:
+
                     self.env[variable_name]=value
                 else:
                     print("Redeclaration Error")
@@ -95,19 +116,44 @@ class Interpreter():
                     print(value,end='')
                     print(" ",end='')
                 print("")
-            elif tree[0]=='ASSIGN':            
-                variable_name=tree[1] 
-                value=self.eval_expression(tree[2]) 
+            elif tree[0]=='ASSIGN':
+                print(tree)
+                variable_name=tree[1]
+                if '.' in variable_name:
+                    variable_name=variable_name.split('.')
+                    structname=variable_name[0]
+                    structkey=variable_name[1]
+                    value=self.eval_expression(tree[2])
+                    if structname in self.env:
+                        self.env[structname][structkey]=value
+                    else:
+                        print("structure doesn't exist")
+
+                else:
+                    value=self.eval_expression(tree[2]) 
+                    if variable_name in self.env:
+                        self.env[variable_name]=value
+                    else:
+                        print("Variable not Initialised")
+            elif tree[0]=='ASSIGNINC': 
+                variable_name=tree[1][1]
                 if variable_name in self.env:
-                    self.env[variable_name]=value
+                    self.env[variable_name]=self.env[variable_name]+1
                 else:
                     print("Variable not Initialised")
+
             elif tree[0]=="STRUCT":
                 struct_name=tree[1]
-                print(struct_name)
                 struct_variables=tree[2]
                 self.structs[struct_name]=struct_variables
-                print(self.structs) 
+            elif tree[0]=="STRUCTINST":
+                struct_name=tree[1]
+                self.env[tree[2]]={}
+                all_elements=self.structs[struct_name]
+                for element in all_elements:
+                    self.env[tree[2]][element[1]]=None
+    
+    
     def interpret(self,trees):
         if trees[0]=="statements":
             statements=trees[1]
@@ -148,12 +194,11 @@ def check_structs():
     Interpret=Interpreter() 
 
     
-    a_assign=parser.parse_text('STRUCT BookStruct {INT a; STRING name; INT b;};')
-    print(a_assign)
+    a_assign=parser.parse_text('STRUCT BookStruct {INT a; STRING name; INT b;}; BookStruct Book1;Book1.a=10;PRINT(Book1.a);') 
     (Interpret.interpret(a_assign))
     Interpret.print_variables()
 
-check_structs()
+#check_structs()
 
 def testing_variables():
     lexer=Lexer()
@@ -211,9 +256,8 @@ def check_expr():
     Interpret.assign_tree(bool_assign[0]) 
     (Interpret.interpret())
     print_assign=parser.parse_text('(2 & 2 ) | (3 & (2 &2));')  
-    print(print_assign)
     Interpret.assign_tree(print_assign[0]) 
-    print(Interpret.interpret())
+    #print(Interpret.interpret())
     Interpret.print_variables()
 
 def check_while_loop():
@@ -271,3 +315,21 @@ def testing():
     (Interpret.interpret())
     Interpret.assign_tree(line2[0])
     (Interpret.interpret())
+
+
+def main():
+
+    files=open("test_cases/"+sys.argv[1],'r')
+
+    all_code=files.read()
+    lexer=Lexer()
+    lexer.build()
+    parser=Parser()
+    Interpret=Interpreter()
+
+    print("Welcome to G0C Interpreter")
+    AST=parser.parse_text(all_code)
+    Interpret.interpret(AST)
+    #Interpret.print_variables()
+
+main()

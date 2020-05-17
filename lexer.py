@@ -20,8 +20,8 @@ class Lexer:
      
     PARENTHESIS=['LPAREN','RPAREN','COLON','COMMA','DOT']
     LOOP=['DO','WHILE'] 
-    OTHERS=['ID','NUMBER']
-    CURLY=['LBRACE','RBRACE','CONTENT','NOSPACE']
+    OTHERS=['ID','NUMBER','STRUCT_NAME']
+    CURLY=['LBRACE','RBRACE','NOSPACE']
     tokens=[]
     tokens.extend(NUMERICAL_OPERATORS)
     tokens.extend(LOGICAL_OPERATORS)
@@ -66,10 +66,9 @@ class Lexer:
     t_STRUCT=r'STRUCT'
     #numbers
     def t_DOUBLE(self,t):
-        'hello'
-        r'((\d+)(\.\d+)(e(\+|-)?(\d+))? | (\d+)e(\+|-)?(\d+))([lL]|[fF])?'
-
-        t.value=float(t.value)  
+        r"\d+\.\d+"
+        t.type='DOUBLE'
+        t.value=float(t.value)
         return t
     
     def t_INT(self,t):
@@ -85,12 +84,17 @@ class Lexer:
         elif ((t.value=="FALSE") or (t.value=="False")):
             t.value=False
         return t 
+
+    def t_STRUCT_NAME(self,t):
+         
+        r'\b(\w+[.]\w+)'
+        t.type='ID'
+        return t
     def t_ID(self,t):   
         r'[a-zA-Z_][a-zA-Z0-9_]*'
         if t.value in self.keywords:
             t.type=self.keywords[t.value]
         return t
-    
     def t_STRING(self,t):
         r'"[^"]*"'
         t.value=t.value[1:-1]

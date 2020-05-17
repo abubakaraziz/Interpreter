@@ -40,17 +40,6 @@ class Parser:
         elif len(p)==9:
             p[0]=('loop',p[1],p[4],p[7],p[8])
 
-        
-    def p_statements_many(self,p):
-        '''
-        statements : statements statement COLON
-                   | statement COLON
-        '''
-        if len(p)==4:
-            p[0]=p[1] + [p[2]]
-        elif len(p)==3:
-            p[0]=[p[1]]
-        
     def p_empty(self,p):
         '''
         empty : 
@@ -63,6 +52,16 @@ class Parser:
         loop_conditions : LPAREN expr RPAREN 
         '''
         p[0]=('loop_condition',p[2])
+    def p_statements_many(self,p):
+        '''
+        statements : statements statement COLON
+                   | statement COLON
+        '''
+        if len(p)==4:
+            p[0]=p[1] + [p[2]]
+        elif len(p)==3:
+            p[0]=[p[1]]
+        
 
 
     def p_definingvariable_statement(self,p):
@@ -72,7 +71,8 @@ class Parser:
                   | STRING ID EQUALS expr 
                   | BOOL ID EQUALS expr
                   | DOUBLE ID EQUALS expr
-                  | ID EQUALS expr 
+                  | ID EQUALS expr
+                  | ID ID 
                   | expr
                      
         '''
@@ -82,6 +82,8 @@ class Parser:
             p[0]=('DEFINE',p[2],p[4]) 
         elif len(p)==4: 
             p[0]=('ASSIGN',p[1],p[3]) 
+        elif len(p)==3:
+            p[0]=('STRUCTINST',p[1],p[2])
         elif len(p)==2: 
             p[0]=p[1] 
 
@@ -94,7 +96,6 @@ class Parser:
         '''
         
         if len(p)==3:
-            print(p[1])
             p[0]=  [p[1]]  + p[2]
         else:
             p[0]=[ p[1]]
@@ -154,32 +155,35 @@ class Parser:
                 | expr OR_LOGICAL expr
                 | expr PLUS PLUS
                 | NOT expr
+                | MINUS expr
                         '''
-        if len(p)==4:
+        if p[2]=="+" and p[3]=="+":
+            p[0]=('ASSIGNINC',p[1])
+        elif len(p)==4:
             p[0]=('binop',p[1],p[2],p[3])
-        elif len(p)==3:
-            p[0]=('NOT', p[2])
-    
-    
+        elif len(p)==3 and p[1]=='NOT':
+            p[0]=('NOT', p[2]) 
+        elif len(p)==3 and p[1]=='-': 
+            p[0]=('binop',('VAL',0),'-',p[2])
     def p_expr_factor(self,p):
-        '''expr : 
+        '''expr : STRUCT_NAME 
+                | DOUBLE 
                 | INT  
                 | BOOL 
                 | STRING
-                | INT DOT INT 
                 '''
-        if len(p)==2:
-            p[0]=('VAL',p[1])
+        
+        
+        if len(p)==4:
+            p[0]=('DOUBLE',p[1],p[3])
+        
         elif len(p)==3: 
             if p[1]=='MINUS':
                 p[0]=('NEGVAL',p[2])
             elif p[1]=='NOT': 
-                p[0]=('NOT',p[2])
-        elif len(p)==4:
-            print('here')
-            p[0]=('DOUBLE',p[1],p[3])
-        
-        
+                p[0]=('NOT',p[2]) 
+        elif len(p)==2:
+            p[0]=('VAL',p[1])
      
     def p_expr_id(self,p):
         'expr : ID'
